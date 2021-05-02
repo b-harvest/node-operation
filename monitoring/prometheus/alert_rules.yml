@@ -1,0 +1,115 @@
+# All the rules in a group are processed sequentially, while all groups are processed in parallel.
+# By default, the rule processing follows the evaluation_interval duration from the Prometheus configuration,
+# but groups can individually override this setting.
+# This is useful if some rules are more expensive and should then be processed less often.
+
+groups:
+  - name: tendermint_metrics
+    rules:
+      # Alert for any instance that tendermint_consensus_latest_block_height doesn't add more of block height in 1 minute
+      - alert: BlockSyncStop
+        expr: rate(tendermint_consensus_latest_block_height[1m]) == 0 or rate(tendermint_consensus_latest_block_height[1m]) < 0.1
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "블록 동기화 멈춤"
+          instance: "{{ $labels.instance }}" 
+          job: "{{ $labels.job }}"
+          value: "{{ $value }}"
+          description: "블록 동기화 1분 이상 멈췄습니다."
+
+      # Alert for any instance that memory pool size is over 500 (Uncommited Txs)
+      - alert: MemoryPoolUncommitedTxsOver500
+        expr: tendermint_mempool_size > 500
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Mempool Size 500개 이상 쌓인 상태"
+          instance: "{{ $labels.instance }}" 
+          job: "{{ $labels.job }}"
+          value: "{{ $value }}"
+          description: "지난 5분간 메모리 풀에 unconfirmed_txs가 500개 이상 쌓였습니다. 원인 파악 후 적절한 조치가 필요합니다."
+
+      # Alert for any instance that memory pool size is over 1000 (Uncommited Txs)
+      - alert: MemoryPoolUncommitedTxsOver1000
+        expr: tendermint_mempool_size > 1000
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Mempool Size 1000개 이상 쌓인 상태"
+          instance: "{{ $labels.instance }}" 
+          job: "{{ $labels.job }}"
+          value: "{{ $value }}"
+          description: "지난 5분간 메모리 풀에 unconfirmed_txs가 1000개 이상 쌓였습니다. 원인 파악 후 적절한 조치가 필요합니다."
+          
+  - name: node_exporter_metrics
+    rules:
+      # Alert for any instance that is unreachable within 'for' time.
+      - alert: InstanceDown
+        expr: up == 0
+        for: 60s
+        labels:
+          severity: critical
+        annotations:
+          summary: "{{ $labels.job }} 응답 없음"
+          instance: "{{ $labels.instance }}"
+          job: "{{ $labels.job }}"
+          value: "{{ $value }}"
+          description: "{{ $labels.job }} 1분 이상 응답이 없습니다."
+          
+      # Alert for any instance that has high CPU load
+      - alert: HighCpuLoad
+        expr: 100 - (avg by(job) (irate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) > 80
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "CPU 사용량이 80%를 초과하였습니다."
+          instance: "{{ $labels.instance }}" 
+          job: "{{ $labels.job }}"
+          value: "{{ $value }}"
+          description: "지난 2분 동안 CPU 사용량이 80% 이상입니다. 노드 상태를 확인해주세요."
+
+      # Alert for any instance that runs out of memory that has less than 20% 
+      - alert: OutOfMemory
+        expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 20
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "메모리 사용량이 80%를 초과하였습니다."
+          instance: "{{ $labels.instance }}" 
+          job: "{{ $labels.job }}"
+          value: "{{ $value }}"
+          description: "지난 2분 동안 메모리 사용량이 80% 이상입니다. 노드 상태를 확인해주세요."
+
+      # Alert for any instance that experiences unusual network throughput in
+      # Host network interfaces are probably receiving too much data (> 100 MB/s)
+      - alert: UnusualNetworkThroughputIn
+        expr: sum by (job) (irate(node_network_receive_bytes_total[2m])) / 1024 / 1024 > 100
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "네트워크 입력량 비정상적으로 높음"
+          instance: "{{ $labels.instance }}" 
+          job: "{{ $labels.job }}"
+          value: "{{ $value }}"
+          description: "지난 2분 동안 네트워크의 입력량이 100 MB/s를 초과하였습니다. 정상적인 활동인지 확인해주세요."
+
+      # Alert for any instance that experiences unusual network throughput out (> 100 MB/s)
+      # Host network interfaces are probably sending too much data (> 100 MB/s)
+      - alert: UnusualNetworkThroughputOut
+        expr: sum by (job) (irate(node_network_transmit_bytes_total[2m])) / 1024 / 1024 > 100
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "네트워크 출력량 비정상적으로 높음"
+          instance: "{{ $labels.instance }}" 
+          job: "{{ $labels.job }}"
+          value: "{{ $value }}"
+          description: "지난 2분 동안 네트워크 출력량이 100 MB/s를 초과하였습니다. 정상적인 활동인지 확인해주세요."
