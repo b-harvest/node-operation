@@ -1,2 +1,18 @@
-# node-operation
-A collection of scripts or useful information for node operation
+<p align="center">
+  <a href="https://github.com/b-harvest/node-operation" target="_blank"><img width="140" src="images/logo.jpeg" alt="B-Harvest Logo"></a>
+</p>
+<h1 align="center">
+    B-Harvest Node Operation Toolbox
+</h1>
+
+## Description
+
+A collection of any scripts or useful tips for node operation
+## Structure
+
+|Folder | Description |
+|---|---|
+| internal | 회사 내부에서 사용하는 도구 모음 |
+| monitoring | 모니터링 설정 값 및 도구 모음 |
+| ... | ... |
+
