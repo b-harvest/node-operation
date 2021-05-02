@@ -12,7 +12,6 @@ A collection of any scripts or useful tips for node operation
 
 |Folder | Description |
 |---|---|
-| internal | 회사 내부에서 사용하는 도구 모음 |
 | monitoring | 모니터링 설정 값 및 도구 모음 |
 | ... | ... |
 
