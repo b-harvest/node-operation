@@ -1,0 +1,56 @@
+global:
+  # resolve_timeout is the time after which an alert is declared resolved
+  resolve_timeout: 1m
+
+  # incoming-webhook API auth for "gravity-testnet-monitoring" channel
+  slack_api_url: "https://hooks.slack.com/services/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"
+
+route:
+  # in order to avoid continuously sending notifications for similar alerts
+  # (like the same process failing on multiple instances, nodes, and data centres),
+  # the Alertmanager may be configured to group these related alerts into one alert:
+  group_by: ["node_exporter_metrics", "tendermint_metrics"]
+  
+  # how long to wait to buffer alerts of the same group before sending initially. (Usually ~0s to few minutes.)
+  group_wait: 1m
+
+  # how long to wait before sending an alert that has been added to a group which contains already fired alerts. (Usually ~5m or more.)
+  group_interval: 5m
+
+  # how long to wait before re-sending a given alert that has already been sent. (Usually ~3h or more).
+  repeat_interval: 3h
+
+  # default receiver
+  receiver: "alert_slack"
+
+  routes:
+    - receiver: "alert_slack"
+      match:
+        severity: "warning"
+
+receivers:
+  - name: "alert_slack"
+    slack_configs:
+      - channel: "#monitoring-test"
+        title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] Warning'
+        text: >-
+          {{ range .Alerts }}
+            *Summary:* {{ .Annotations.summary }} - `{{ .Labels.severity }}`
+            *Alert Name:* {{ .Alert }}
+            *Job Name:* {{ .Annotations.job }}
+            *Instance:* {{ .Annotations.instance }}
+            *Value:* {{ .Annotations.Value }}
+            *Description:* {{ .Annotations.description }}
+            *Graph:* <{{ .GeneratorURL }}|:chart_with_upwards_trend:>
+          {{ end }}
+
+# inhibit_rules are to suppress notifications for certain alerts if other alerts are already fired
+inhibit_rules:
+  - target_match_re:
+      alertname: "OutOfMemory|HighCpuLoad"
+  - source_match:
+      alertname: "InstanceDown"
+      equal: ["critical"]
+  - source_match:
+      alertname: "BlockSyncStop"
+      equal: ["critical"]
