@@ -3,7 +3,10 @@ global:
   resolve_timeout: 1m
 
   # incoming-webhook API auth for "gravity-testnet-monitoring" channel
-  slack_api_url: "https://hooks.slack.com/services/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"
+  # gravity-dex-monitoring
+  slack_api_url: "https://hooks.slack.com/services/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"
+  # gravity-dex-monitoring-test
+  # slack_api_url: "https://hooks.slack.com/services/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"
 
 route:
   # in order to avoid continuously sending notifications for similar alerts
@@ -18,7 +21,8 @@ route:
   group_interval: 5m
 
   # how long to wait before re-sending a given alert that has already been sent. (Usually ~3h or more).
-  repeat_interval: 3h
+  # since Gravity DEX testnet needs an immediate attention, let's give repeat_interval 15 minutes.
+  repeat_interval: 15m
 
   # default receiver
   receiver: "alert_slack"

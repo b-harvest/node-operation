@@ -32,18 +32,18 @@ groups:
           value: "{{ $value }}"
           description: "지난 5분간 메모리 풀에 unconfirmed_txs가 10개 이상 쌓였습니다. 원인 파악 후 적절한 조치가 필요합니다."
 
-      # Alert for any instance that memory pool size is over 1000 (Uncommited Txs)
-      - alert: MemoryPoolUncommitedTxsOver1000
-        expr: tendermint_mempool_size > 1000
+      # Alert for any instance that memory pool size is over 500 (Uncommited Txs)
+      - alert: MemoryPoolUncommitedTxsOver500
+        expr: tendermint_mempool_size > 500
         for: 1m
         labels:
           severity: warning
         annotations:
-          summary: "Mempool Size 1000개 이상 쌓인 상태"
+          summary: "Mempool Size 500개 이상 쌓인 상태"
           instance: "{{ $labels.instance }}" 
           job: "{{ $labels.job }}"
           value: "{{ $value }}"
-          description: "지난 5분간 메모리 풀에 unconfirmed_txs가 1000개 이상 쌓였습니다. 원인 파악 후 적절한 조치가 필요합니다."
+          description: "지난 5분간 메모리 풀에 unconfirmed_txs가 500개 이상 쌓였습니다. 원인 파악 후 적절한 조치가 필요합니다."
           
   - name: node_exporter_metrics
     rules:
