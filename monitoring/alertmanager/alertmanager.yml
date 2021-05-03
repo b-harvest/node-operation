@@ -3,7 +3,7 @@ global:
   resolve_timeout: 1m
 
   # incoming-webhook API auth for "gravity-testnet-monitoring" channel
-  slack_api_url: "https://hooks.slack.com/services/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"
+  slack_api_url: "https://hooks.slack.com/services/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"
 
 route:
   # in order to avoid continuously sending notifications for similar alerts
@@ -12,7 +12,7 @@ route:
   group_by: ["node_exporter_metrics", "tendermint_metrics"]
   
   # how long to wait to buffer alerts of the same group before sending initially. (Usually ~0s to few minutes.)
-  group_wait: 1m
+  group_wait: 30s
 
   # how long to wait before sending an alert that has been added to a group which contains already fired alerts. (Usually ~5m or more.)
   group_interval: 5m
@@ -31,26 +31,36 @@ route:
 receivers:
   - name: "alert_slack"
     slack_configs:
-      - channel: "#gravity-testnet-monitoring"
-        title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] Warning'
-        text: >-
-          {{ range .Alerts }}
-            *Summary:* {{ .Annotations.summary }} - `{{ .Labels.severity }}`
-            *Alert Name:* {{ .Alert }}
-            *Job Name:* {{ .Annotations.job }}
-            *Instance:* {{ .Annotations.instance }}
-            *Value:* {{ .Annotations.Value }}
-            *Description:* {{ .Annotations.description }}
-            *Graph:* <{{ .GeneratorURL }}|:chart_with_upwards_trend:>
-          {{ end }}
+      - send_resolved: true  
+        channel: "#gravity-dex-monitoring-test"
+        title: "*Summary:* {{ range .Alerts }}{{ .Annotations.summary }}\n{{ end }}"
+        text: "*Description:* {{ range .Alerts }}{{ .Annotations.description }}\n{{ end }}"
+
+# [TEST]
+# title: "{{ range .Alerts }}{{ .Annotations.summary }}\n{{ end }}"
+# text: "{{ range .Alerts }}{{ .Annotations.description }}\n{{ end }}"
+# Mempool Size 10개 이상 쌓인 상태
+# 지난 5분간 메모리 풀에 unconfirmed_txs가 10개 이상 쌓였습니다. 원인 파악 후 적절한 조치가 필요합니다.
+
+        # title: "[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] Warning"
+        # text: >-
+        #   {{ range .Alerts }}
+        #     *Summary:* {{ .Annotations.summary }} - `{{ .Labels.severity }}`
+        #     *Alert Name:* {{ .Alert }}
+        #     *Job Name:* {{ .Annotations.job }}
+        #     *Instance:* {{ .Annotations.instance }}
+        #     *Value:* {{ .Annotations.Value }}
+        #     *Description:* {{ .Annotations.description }}
+        #     *Graph:* <{{ .GeneratorURL }}|:chart_with_upwards_trend:>
+        #   {{ end }}
 
 # inhibit_rules are to suppress notifications for certain alerts if other alerts are already fired
 inhibit_rules:
-  - target_match_re:
-      alertname: "OutOfMemory|HighCpuLoad"
+  # Matchers for which one or more alerts have to exist for the
+  # inhibition to take effect.
   - source_match:
-      alertname: "InstanceDown"
-      equal: ["critical"]
+      labelname: "InstanceDown"
+      labelvalue: ["critical"]
   - source_match:
-      alertname: "BlockSyncStop"
-      equal: ["critical"]
+      labelname: "MemoryPoolUncommitedTxsOver10"
+      labelvalue: ["warning"]

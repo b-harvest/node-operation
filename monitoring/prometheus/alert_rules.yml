@@ -19,18 +19,18 @@ groups:
           value: "{{ $value }}"
           description: "블록 동기화 1분 이상 멈췄습니다."
 
-      # Alert for any instance that memory pool size is over 500 (Uncommited Txs)
-      - alert: MemoryPoolUncommitedTxsOver500
-        expr: tendermint_mempool_size > 500
+      # Alert for any instance that memory pool size is over 10 (Uncommited Txs)
+      - alert: MemoryPoolUncommitedTxsOver10
+        expr: tendermint_mempool_size > 10
         for: 1m
         labels:
           severity: warning
         annotations:
-          summary: "Mempool Size 500개 이상 쌓인 상태"
+          summary: "Mempool Size 10개 이상 쌓인 상태"
           instance: "{{ $labels.instance }}" 
           job: "{{ $labels.job }}"
           value: "{{ $value }}"
-          description: "지난 5분간 메모리 풀에 unconfirmed_txs가 500개 이상 쌓였습니다. 원인 파악 후 적절한 조치가 필요합니다."
+          description: "지난 5분간 메모리 풀에 unconfirmed_txs가 10개 이상 쌓였습니다. 원인 파악 후 적절한 조치가 필요합니다."
 
       # Alert for any instance that memory pool size is over 1000 (Uncommited Txs)
       - alert: MemoryPoolUncommitedTxsOver1000
