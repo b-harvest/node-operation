@@ -71,7 +71,9 @@ ExecStart=/usr/local/bin/prometheus \
     --web.external-url='$WebExternalURL' \
     --web.listen-address='$WebListenAddr' \
     --storage.tsdb.path=/var/lib/prometheus/ \
-    --storage.tsdb.retention="7d"
+    --storage.tsdb.retention="7d" \
+    --log.level="info" \
+    --log.format="logfmt"
 
 [Install]
 WantedBy=multi-user.target

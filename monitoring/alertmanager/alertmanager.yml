@@ -33,26 +33,7 @@ receivers:
     slack_configs:
       - send_resolved: true  
         channel: "#gravity-dex-monitoring-test"
-        title: "*Summary:* {{ range .Alerts }}{{ .Annotations.summary }}\n{{ end }}"
-        text: "*Description:* {{ range .Alerts }}{{ .Annotations.description }}\n{{ end }}"
-
-# [TEST]
-# title: "{{ range .Alerts }}{{ .Annotations.summary }}\n{{ end }}"
-# text: "{{ range .Alerts }}{{ .Annotations.description }}\n{{ end }}"
-# Mempool Size 10개 이상 쌓인 상태
-# 지난 5분간 메모리 풀에 unconfirmed_txs가 10개 이상 쌓였습니다. 원인 파악 후 적절한 조치가 필요합니다.
-
-        # title: "[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] Warning"
-        # text: >-
-        #   {{ range .Alerts }}
-        #     *Summary:* {{ .Annotations.summary }} - `{{ .Labels.severity }}`
-        #     *Alert Name:* {{ .Alert }}
-        #     *Job Name:* {{ .Annotations.job }}
-        #     *Instance:* {{ .Annotations.instance }}
-        #     *Value:* {{ .Annotations.Value }}
-        #     *Description:* {{ .Annotations.description }}
-        #     *Graph:* <{{ .GeneratorURL }}|:chart_with_upwards_trend:>
-        #   {{ end }}
+        text: "{{ range .Alerts }}<!channel> {{ .Annotations.summary }}\n{{ .Annotations.description }}\n{{ end }}"
 
 # inhibit_rules are to suppress notifications for certain alerts if other alerts are already fired
 inhibit_rules:

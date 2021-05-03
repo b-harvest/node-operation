@@ -13,6 +13,11 @@
 | alertmanager/alertmanager.yml | /etc/alertmanager/alertmanager.yml |
 | grafana.ini (default) | /etc/grafana/grafana.ini |
 
+## Slack Channel Webhook API Keys
+
+- gravity-dex-monitoring-test: https://hooks.slack.com/services/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
+- gravity-dex-monitoring: https://hooks.slack.com/services/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
+
 ## Reference
 
 - [Prometheus Alerting with AlertManager](https://medium.com/devops-dudes/prometheus-alerting-with-alertmanager-e1bbba8e6a8e)
