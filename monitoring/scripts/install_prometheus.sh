@@ -40,13 +40,17 @@ rm -rf prometheus-$VERSION.linux-amd64.tar.gz &> /dev/null
 
 # Copy prometheus and promtool binaries 
 echo "> Copying prometheus and promtool binaries..."
-sudo cp prometheus-$VERSION.linux-amd64/{prometheus,promtool} /usr/local/bin
-sudo chown prometheus:prometheus /usr/local/bin/{prometheus,promtool}
+sudo cp prometheus-$VERSION.linux-amd64/prometheus /usr/local/bin
+sudo cp prometheus-$VERSION.linux-amd64/promtool /usr/local/bin
+sudo chown prometheus:prometheus /usr/local/bin/prometheus
+sudo chown prometheus:prometheus /usr/local/bin/promtool
 
 # Copy consoles and console_libraries directories
 echo "> Copying console, console_libraries..."
-sudo cp -r prometheus-$VERSION.linux-amd64/{consoles,console_libraries} /etc/prometheus
-sudo chown -R prometheus:prometheus /etc/prometheus/{consoles,console_libraries}
+sudo cp -r prometheus-$VERSION.linux-amd64/consoles /etc/prometheus
+sudo cp -r prometheus-$VERSION.linux-amd64/console_libraries /etc/prometheus
+sudo chown -R prometheus:prometheus /etc/prometheus/consoles
+sudo chown -R prometheus:prometheus /etc/prometheus/console_libraries
 
 # Copy default configuration file
 sudo cp prometheus-$VERSION.linux-amd64/prometheus.yml /etc/prometheus/prometheus.yml
@@ -85,24 +89,3 @@ sudo systemctl start prometheus
 # Check the service's status 
 echo "> Verifying Prometheus is running by checking the service's status..."
 sudo systemctl status prometheus
-
-echo '[Unit]
-Description=Prometheus
-After=network.target
-
-[Service]
-User=prometheus
-Group=prometheus
-Type=simple
-ExecStart=/usr/local/bin/prometheus \
-    --config.file /etc/prometheus/prometheus.yml \
-    --web.console.templates=/etc/prometheus/consoles \
-    --web.console.libraries=/etc/prometheus/console_libraries \
-    --web.external-url='http://localhost' \
-    --web.listen-address=':9090' \
-    --storage.tsdb.path=/var/lib/prometheus/ \
-    --storage.tsdb.retention="7d"
-
-[Install]
-WantedBy=multi-user.target
-' >> prometheus.service

@@ -33,7 +33,7 @@ rm -rf alertmanager-$VERSION.linux-amd64.tar.gz &> /dev/null
 
 # Copy prometheus and promtool binaries 
 echo "-> Copying prometheus and promtool binaries..."
-sudo cp alertmanager-$VERSION.linux-amd64/alertmanager,amtool}/usr/local/bin
+sudo cp alertmanager-$VERSION.linux-amd64/alertmanager /usr/local/bin
 sudo cp alertmanager-$VERSION.linux-amd64/amtool /usr/local/bin
 sudo chown alertmanager:alertmanager /usr/local/bin/alertmanager
 sudo chown alertmanager:alertmanager /usr/local/bin/amtool
@@ -66,7 +66,7 @@ sudo cp -f alertmanager.service /etc/systemd/system/alertmanager.service
 rm -rf alertmanager.service &> /dev/null
 
 # Start the service up and running
-echo "running alertmanager service..."
+echo "-> Running alertmanager service..."
 sudo systemctl daemon-reload
 sudo systemctl start alertmanager
 
