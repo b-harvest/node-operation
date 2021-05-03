@@ -24,14 +24,14 @@ route:
   receiver: "alert_slack"
 
   routes:
-    - receiver: "alert_slack"
-      match:
+    - match:
         severity: "warning"
-
+      receiver: "alert_slack"
+      
 receivers:
   - name: "alert_slack"
     slack_configs:
-      - channel: "#monitoring-test"
+      - channel: "#gravity-testnet-monitoring"
         title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] Warning'
         text: >-
           {{ range .Alerts }}
