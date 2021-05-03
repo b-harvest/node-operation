@@ -8,9 +8,10 @@
 
 |File | Location |
 |---|---|
-| alert_rules.yml | /etc/prometheus/alert_rules.yml |
-| prometheus.yml | /etc/prometheus/prometheus.yml |
-| alertmanager.yml | /etc/alertmanager/alertmanager.yml |
+| prometheus/alert_rules.yml | /etc/prometheus/alert_rules.yml |
+| prometheus/prometheus.yml | /etc/prometheus/prometheus.yml |
+| alertmanager/alertmanager.yml | /etc/alertmanager/alertmanager.yml |
+| grafana.ini (default) | /etc/grafana/grafana.ini |
 
 ## Reference
 
