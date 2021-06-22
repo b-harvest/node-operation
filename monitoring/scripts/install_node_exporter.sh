@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Node Exporter provides detailed information about the system, including CPU, disk, and memory usage
-VERSION=0.15.0
+VERSION=1.1.2
 PORT=9100
 
 # Create node_exporter system user and group for security purposes 
